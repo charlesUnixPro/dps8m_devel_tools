@@ -61,8 +61,9 @@ int asMain(int argc, char **argv)
     inFile = argv[0];   // for LEXgets/c
     srcFile = strdup(inFile);
     
+    char *of = strdup (outFile);
     char *bnIn = strdup(basename(srcFile));
-    char *bnOut = strdup(basename(outFile));
+    char *bnOut = strdup(basename(of));
     
     if (strcmp(bnIn, bnOut) == 0)
     {
@@ -76,7 +77,6 @@ int asMain(int argc, char **argv)
         fprintf(stderr, "cannot open %s for writing\n", outFile);
         exit(1);
     }
-    
     initInstructionTable();
 
     initSymtab();

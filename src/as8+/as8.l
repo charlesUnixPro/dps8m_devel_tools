@@ -698,7 +698,8 @@ everythingelse	.
 
 <InDUP>^[^\n]*$             {
                             // TODO: need a better way for DUPEND, but'll do for now
-                            if (strcasestr(yytext, "dupend"))
+                            //if (strcasestr(yytext, "dupend"))
+                            if (strstr(yytext, "dupend"))
                             {
                                 if (debug)
                                     fprintf(stderr, "found DUPEND\n");
