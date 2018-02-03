@@ -19,15 +19,16 @@
 #include <ctype.h>
 #include <string.h>
 #include <libgen.h>
+#include <inttypes.h>
 
 #include "mst.h"
 #include "bit36.h"
 #include "simhtapes.h"
 
 
-typedef uint16_t word9;
-typedef uint64_t word36;
-typedef unsigned int uint;
+//typedef uint16_t word9;
+//typedef uint64_t word36;
+//typedef unsigned int uint;
 
 #define max(a,b) \
    ({ __typeof__ (a) _a = (a); \
@@ -110,7 +111,7 @@ static int read_mst_blk (int fd)
           continue;
 
         word36 w6 = extr36 (nxt, 5);     // flags
-        //printf ("flags %036lo\n", w6);
+        //printf ("flags %036"PRIo64"\n", w6);
         word36 repeat = w6 & (1LU << 20);
         if (repeat)
           {
@@ -156,19 +157,19 @@ static int read_mst_blk (int fd)
 
     if (w1 != header_c1)
       {
-        printf ("c1 wrong %012lo\n", w1);
+        printf ("c1 wrong %012"PRIo64"\n", w1);
       }
     if (w8 != header_c2)
       {
-        printf ("c2 wrong %012lo\n", w8);
+        printf ("c2 wrong %012"PRIo64"\n", w8);
       }
     if (t1 != trailer_c1)
       {
-        printf ("t1 wrong %012lo\n", t1);
+        printf ("t1 wrong %012"PRIo64"\n", t1);
       }
     if (t8 != trailer_c2)
       {
-        printf ("t2 wrong %012lo\n", t8);
+        printf ("t2 wrong %012"PRIo64"\n", t8);
       }
 
     word36 totbits = w5 & 0777777UL;

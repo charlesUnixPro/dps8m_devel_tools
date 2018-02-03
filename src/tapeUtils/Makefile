@@ -147,7 +147,7 @@ viipunch.o : viipunch.c
 EXES +=  pack8 
 OBJS +=  pack8.o
 pack8 : pack8.o bit36.o
-pack8.c : pack8.c bit36.h
+pack8.o : pack8.c bit36.h
 
 EXES +=  cat36 
 OBJS +=  cat36.o

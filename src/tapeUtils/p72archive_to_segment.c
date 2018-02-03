@@ -20,6 +20,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <libgen.h>
+#include <inttypes.h>
 
 
 // extract bits into a number
@@ -93,7 +94,7 @@ int main (int argc, char * argv [])
 
     for (uint i = 0; i < nwords; /* i ++ */)
       {
-        //printf ("top %012lo\n", big [i]);
+        //printf ("top %012"PRIo64"\n", big [i]);
         if (big [i]     != 0014012012012lu ||
             big [i + 1] != 0017012011011lu)
           {
@@ -110,14 +111,14 @@ int main (int argc, char * argv [])
             uint nc = k % 4u;
             uint shift = (3 - nc) * 9;
             segname [j] = (big [i + nw] >> shift) & 0177;
-//printf ("%d %d %d %d %d %012lo %o\n", i, j, k, nw, k % 4, big [i + nw], segname [j]);
+//printf ("%d %d %d %d %d %012"PRIo64" %o\n", i, j, k, nw, k % 4, big [i + nw], segname [j]);
           }
         segname [32] = '\0';
         trimTrailingSpaces (segname);
         printf ("%s\n", segname);
 
-//for (int xx = 0; xx < 32; xx ++) printf ("   %012lo\n", big [i + xx]);
-printf ("bitcnt %012lo%012lo\n", big [i + 21], big [i + 22]);
+//for (int xx = 0; xx < 32; xx ++) printf ("   %012"PRIo64"\n", big [i + xx]);
+printf ("bitcnt %012"PRIo64"%012"PRIo64"\n", big [i + 21], big [i + 22]);
         char bc [9];
         bc [0] = (big [i + 21] >> 27) & 0177;
         bc [1] = (big [i + 21] >> 18) & 0177;

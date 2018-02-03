@@ -19,6 +19,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <inttypes.h>
 
 #include "bit36.h"
 
@@ -1525,16 +1526,16 @@ char *disassembleDESCf(word36 descriptor, int MFk)
         sprintf(len, "%02o", n);
     
     char _tn[16];
-    int _cn;
+    //int _cn;
     switch(tn)
     {
         case 0:
             strcpy(_tn, "9");
-            _cn = (cn >> 1) & 03;
+            //_cn = (cn >> 1) & 03;
             break;
         case 1:
             strcpy(_tn, "4");
-            _cn = cn;
+            //_cn = cn;
             break;
     }
 
@@ -1687,85 +1688,85 @@ char *disAssembleMW(word36* ins)
             mf1 = GET_MF1(instruction);
             mf2 = GET_MF2(instruction);
             fill = (instruction >> 28) & 0777;
-            strcatf(result, "\t(%s),(%s),fill(%o) \"%012llo\n", decomposeMF(mf1), decomposeMF(mf2), fill, instruction);
-            strcatf(result, "\t%s\t\"%012llo\n", disassembleDESCa(ins[1], mf1), ins[1]);
-            strcatf(result, "\t%s\t\"%012llo\n", disassembleDESCa(ins[2], mf2), ins[2]);
+            strcatf(result, "\t(%s),(%s),fill(%o) \"%012"PRIo64"o\n", decomposeMF(mf1), decomposeMF(mf2), fill, instruction);
+            strcatf(result, "\t%s\t\"%012"PRIo64"o\n", disassembleDESCa(ins[1], mf1), ins[1]);
+            strcatf(result, "\t%s\t\"%012"PRIo64"o\n", disassembleDESCa(ins[2], mf2), ins[2]);
             break;
         case 0120: // scd
         case 0121: // scdr
             mf1 = GET_MF1(instruction);
             mf2 = GET_MF2(instruction);
-            strcatf(result, "\t(%s),(%s) \"%012llo\n", decomposeMF(mf1), decomposeMF(mf2), instruction);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCa(ins[1], mf1), ins[1]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCa(ins[2], mf2), ins[2]);
+            strcatf(result, "\t(%s),(%s) \"%012"PRIo64"o\n", decomposeMF(mf1), decomposeMF(mf2), instruction);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCa(ins[1], mf1), ins[1]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCa(ins[2], mf2), ins[2]);
             break;
         case 0124: // scm
         case 0125: // scmr
             mf1 = GET_MF1(instruction);
             mf2 = GET_MF2(instruction);
             mask = (instruction >> 28) & 0777;
-            strcatf(result, "\t(%s),(%s),mask(%o) \"%012llo\n", decomposeMF(mf1), decomposeMF(mf2), mask, instruction);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCn(ins[1], mf1), ins[1]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCn(ins[2], mf2), ins[2]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleARG(ins[3]), ins[3]);
+            strcatf(result, "\t(%s),(%s),mask(%o) \"%012"PRIo64"o\n", decomposeMF(mf1), decomposeMF(mf2), mask, instruction);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCn(ins[1], mf1), ins[1]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCn(ins[2], mf2), ins[2]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleARG(ins[3]), ins[3]);
             break;
         case 0164: // tct
         case 0165: // tctr
             mf1 = GET_MF1(instruction);
-            strcatf(result, "\t(%s) \"%012llo\n", decomposeMF(mf1), instruction);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCa(ins[1], mf1), ins[1]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleARG(ins[2]), ins[2]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleARG(ins[3]), ins[3]);
+            strcatf(result, "\t(%s) \"%012"PRIo64"o\n", decomposeMF(mf1), instruction);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCa(ins[1], mf1), ins[1]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleARG(ins[2]), ins[2]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleARG(ins[3]), ins[3]);
             break;
         case 0100: // mlr
         case 0101: // mrl
             mf1 = GET_MF1(instruction);
             mf2 = GET_MF2(instruction);
             fill = (instruction >> 28) & 0777;
-            strcatf(result, "\t(%s),(%s),fill(%o) \"%012llo\n", decomposeMF(mf1), decomposeMF(mf2), fill, instruction);
-            strcatf(result, "\t%s\t\"%012llo\n", disassembleDESCa(ins[1], mf1), ins[1]);
-            strcatf(result, "\t%s\t\"%012llo\n", disassembleDESCa(ins[2], mf2), ins[2]);
+            strcatf(result, "\t(%s),(%s),fill(%o) \"%012"PRIo64"o\n", decomposeMF(mf1), decomposeMF(mf2), fill, instruction);
+            strcatf(result, "\t%s\t\"%012"PRIo64"o\n", disassembleDESCa(ins[1], mf1), ins[1]);
+            strcatf(result, "\t%s\t\"%012"PRIo64"o\n", disassembleDESCa(ins[2], mf2), ins[2]);
             break;
         case 0020: // mve
             mf1 = GET_MF1(instruction);
             mf2 = GET_MF2(instruction);
             mf3 = GET_MF3(instruction);
-            strcatf(result, "\t(%s),(%s),(%s) \"%012llo\n", decomposeMF(mf1), decomposeMF(mf2), decomposeMF(mf3), instruction);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCn(ins[1], mf1), ins[1]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCn(ins[2], mf2), ins[2]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCn(ins[3], mf2), ins[3]);
+            strcatf(result, "\t(%s),(%s),(%s) \"%012"PRIo64"o\n", decomposeMF(mf1), decomposeMF(mf2), decomposeMF(mf3), instruction);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCn(ins[1], mf1), ins[1]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCn(ins[2], mf2), ins[2]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCn(ins[3], mf2), ins[3]);
             break;
         case 0160: // mvt
             mf1 = GET_MF1(instruction);
             mf2 = GET_MF2(instruction);
             mf3 = GET_MF3(instruction);
-            strcatf(result, "\t(%s),(%s),(%s) \"%012llo\n", decomposeMF(mf1), decomposeMF(mf2), decomposeMF(mf3), instruction);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCn(ins[1], mf1), ins[1]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCn(ins[2], mf2), ins[2]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleARG(ins[3]), ins[3]);
+            strcatf(result, "\t(%s),(%s),(%s) \"%012"PRIo64"o\n", decomposeMF(mf1), decomposeMF(mf2), decomposeMF(mf3), instruction);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCn(ins[1], mf1), ins[1]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCn(ins[2], mf2), ins[2]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleARG(ins[3]), ins[3]);
             break;
         case 0303: // cmpn
             mf1 = GET_MF1(instruction);
             mf2 = GET_MF2(instruction);
-            strcatf(result, "\t(%s),(%s) \"%012llo\n", decomposeMF(mf1), decomposeMF(mf2), instruction);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCf(ins[1], mf1), ins[1]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCf(ins[2], mf2), ins[2]);
+            strcatf(result, "\t(%s),(%s) \"%012"PRIo64"o\n", decomposeMF(mf1), decomposeMF(mf2), instruction);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCf(ins[1], mf1), ins[1]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCf(ins[2], mf2), ins[2]);
             break;
         case 0300: // mvn
             mf1 = GET_MF1(instruction);
             mf2 = GET_MF2(instruction);
-            strcatf(result, "\t(%s),(%s) \"%012llo\n", decomposeMF(mf1), decomposeMF(mf2), instruction);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCf(ins[1], mf1), ins[1]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCf(ins[2], mf2), ins[2]);
+            strcatf(result, "\t(%s),(%s) \"%012"PRIo64"o\n", decomposeMF(mf1), decomposeMF(mf2), instruction);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCf(ins[1], mf1), ins[1]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCf(ins[2], mf2), ins[2]);
             break;
         case 0025: // mvne
             mf1 = GET_MF1(instruction);
             mf2 = GET_MF2(instruction);
             mf3 = GET_MF3(instruction);
-            strcatf(result, "\t(%s),(%s),(%s) \"%012llo\n", decomposeMF(mf1), decomposeMF(mf2), decomposeMF(mf3), instruction);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCf(ins[1], mf1), ins[1]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCa(ins[2], mf2), ins[2]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCa(ins[3], mf3), ins[3]);
+            strcatf(result, "\t(%s),(%s),(%s) \"%012"PRIo64"o\n", decomposeMF(mf1), decomposeMF(mf2), decomposeMF(mf3), instruction);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCf(ins[1], mf1), ins[1]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCa(ins[2], mf2), ins[2]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCa(ins[3], mf3), ins[3]);
             break;
         case 0060: // csl
         case 0061: // csr
@@ -1776,34 +1777,34 @@ char *disAssembleMW(word36* ins)
             t = (instruction >> 27) & 1;
             bolr = (instruction >> 28) & 017;
             f = (instruction >> 35) & 1;
-            strcatf(result, "\t(%s),(%s),bolr(%o)%s%s \"%012llo\n", decomposeMF(mf1), decomposeMF(mf2),  bolr, t ? ",enablefault": "", f ? ",fill(1)" : ",fill(0)", instruction);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCb(ins[1], mf1), ins[1]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCb(ins[2], mf2), ins[2]);
+            strcatf(result, "\t(%s),(%s),bolr(%o)%s%s \"%012"PRIo64"o\n", decomposeMF(mf1), decomposeMF(mf2),  bolr, t ? ",enablefault": "", f ? ",fill(1)" : ",fill(0)", instruction);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCb(ins[1], mf1), ins[1]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCb(ins[2], mf2), ins[2]);
             break;
         case 0066: // cmpb
             mf1 = GET_MF1(instruction);
             mf2 = GET_MF2(instruction);
             t = (instruction >> 27) & 1;
             f = (instruction >> 35) & 1;
-            strcatf(result, "\t(%s),(%s)%s%s \"%012llo\n", decomposeMF(mf1), decomposeMF(mf2),  t ? ",enablefault": "", f ? ",fill(1)" : ",fill(0)", instruction);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCb(ins[1], mf1), ins[1]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCb(ins[2], mf2), ins[2]);
+            strcatf(result, "\t(%s),(%s)%s%s \"%012"PRIo64"o\n", decomposeMF(mf1), decomposeMF(mf2),  t ? ",enablefault": "", f ? ",fill(1)" : ",fill(0)", instruction);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCb(ins[1], mf1), ins[1]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCb(ins[2], mf2), ins[2]);
             break;
         case 0301: // btd
             mf1 = GET_MF1(instruction);
             mf2 = GET_MF2(instruction);
             t = (instruction >> 27) & 1;
             p = (instruction >> 35) & 1;
-            strcatf(result, "\t(%s),(%s)%s%s \"%012llo\n", decomposeMF(mf1), decomposeMF(mf2),  t ? ",enablefault": "", p ? ",P" : "", instruction);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCa(ins[1], mf1), ins[1]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCf(ins[2], mf2), ins[2]);
+            strcatf(result, "\t(%s),(%s)%s%s \"%012"PRIo64"o\n", decomposeMF(mf1), decomposeMF(mf2),  t ? ",enablefault": "", p ? ",P" : "", instruction);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCa(ins[1], mf1), ins[1]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCf(ins[2], mf2), ins[2]);
             break;
         case 0305: // dtb
             mf1 = GET_MF1(instruction);
             mf2 = GET_MF2(instruction);
-            sprintf(result, "\t(%s),(%s) \"%012lo\n", decomposeMF(mf1), decomposeMF(mf2), instruction);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCf(ins[1], mf1), ins[1]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCa(ins[2], mf2), ins[2]);
+            sprintf(result, "\t(%s),(%s) \"%012"PRIo64"\n", decomposeMF(mf1), decomposeMF(mf2), instruction);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCf(ins[1], mf1), ins[1]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCa(ins[2], mf2), ins[2]);
             break;
         case 0202: // ad2d
         case 0203: // sb2d
@@ -1814,9 +1815,9 @@ char *disAssembleMW(word36* ins)
             r = (instruction >> 26) & 1;
             t = (instruction >> 27) & 1;
             p = (instruction >> 35) & 1;
-            strcatf(result, "\t(%s),(%s)%s%s%s \"%012llo\n", decomposeMF(mf1), decomposeMF(mf2),  r ? ",round" : "", t ? ",enablefault": "", p ? ",P" : "", instruction);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCf(ins[1], mf1), ins[1]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCf(ins[2], mf2), ins[2]);
+            strcatf(result, "\t(%s),(%s)%s%s%s \"%012"PRIo64"o\n", decomposeMF(mf1), decomposeMF(mf2),  r ? ",round" : "", t ? ",enablefault": "", p ? ",P" : "", instruction);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCf(ins[1], mf1), ins[1]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCf(ins[2], mf2), ins[2]);
             break;
         case 0222: // ad3d
         case 0226: // mp3d
@@ -1827,13 +1828,13 @@ char *disAssembleMW(word36* ins)
             r = (instruction >> 26) & 1;
             t = (instruction >> 27) & 1;
             p = (instruction >> 35) & 1;
-            strcatf(result, "\t(%s),(%s),(%s)%s%s%s \"%012llo\n", decomposeMF(mf1), decomposeMF(mf2), decomposeMF(mf3),  r ? ",round" : "", t ? ",enablefault": "", p ? ",P" : "", instruction);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCf(ins[1], mf1), ins[1]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCf(ins[2], mf2), ins[2]);
-            strcatf(result, "\t%s \"%012llo\n", disassembleDESCf(ins[3], mf3), ins[3]);
+            strcatf(result, "\t(%s),(%s),(%s)%s%s%s \"%012"PRIo64"o\n", decomposeMF(mf1), decomposeMF(mf2), decomposeMF(mf3),  r ? ",round" : "", t ? ",enablefault": "", p ? ",P" : "", instruction);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCf(ins[1], mf1), ins[1]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCf(ins[2], mf2), ins[2]);
+            strcatf(result, "\t%s \"%012"PRIo64"o\n", disassembleDESCf(ins[3], mf3), ins[3]);
             break;
         default:
-            strcatf(result, "Unhandled MW EIS \"%012llo", instruction);
+            strcatf(result, "Unhandled MW EIS \"%012"PRIo64"o", instruction);
             break;
     }
     
@@ -1880,7 +1881,7 @@ char *disAssembleSW(word36 instruction)
         strcat(result, extMods[tag].mod);
     }
     
-    strcatf(result, " \"%012llo", instruction);
+    strcatf(result, " \"%012"PRIo64"o", instruction);
     
     return result;
 }
@@ -1915,7 +1916,7 @@ char *disAssembleOCT(word36 instruction)
         strcatf(buff, "\tacc\t'%s'", temp);
         
     } else
-        strcatf(buff, "\toct\t%012llo", instruction & 0777777777777LL);
+        strcatf(buff, "\toct\t%012"PRIo64"o", instruction & 0777777777777LL);
     return buff;
 }
 
@@ -1957,7 +1958,7 @@ char *disAssemble(word36 *ins, int *addl)
 
 void disassembleMemory(word36 *mem, int nWords, long *offset)
 {
-    printf ("\torg\t0%0lo\n", *offset);
+    printf ("\torg\t0%0"PRIo64"\n", *offset);
 
     int wasInhibit = 0;
 
@@ -1967,7 +1968,7 @@ void disassembleMemory(word36 *mem, int nWords, long *offset)
     for(int n = 0 ; n < nWords ; n += 1 + size, *offset += 1 + size)
     {
         if (n % 8 == 0)
-            printf ("\" %06lo:\n", *offset);
+            printf ("\" %06"PRIo64":\n", *offset);
         
         //for (;;)
         {
@@ -1975,7 +1976,7 @@ void disassembleMemory(word36 *mem, int nWords, long *offset)
 #if 0
             if (w & 0200)
                 printf ("\" inhibit on\n");
-            printf ("\" %012lo %s\n", w, disAssemble (w));
+            printf ("\" %012"PRIo64" %s\n", w, disAssemble (w));
             if (w & 0200)
                 printf ("\" inhibit on\n");
 #else
@@ -1993,8 +1994,8 @@ void disassembleMemory(word36 *mem, int nWords, long *offset)
                     printf ("\tinhibit\toff\n");
                     wasInhibit = 0;
                 }
-                //printf ("\toct\t%012llo\n", w);
-                printf("%s\t\" %012lo\n", disAssembleOCT(w), w);
+                //printf ("\toct\t%012"PRIo64"o\n", w);
+                printf("%s\t\" %012"PRIo64"\n", disAssembleOCT(w), w);
             }
             else
             {
@@ -2081,7 +2082,7 @@ int mainOLD (int argc, char * argv [])
 #if 0
             if (w & 0200)
                 printf ("\" inhibit on\n");
-            printf ("\" %012lo %s\n", w, disAssemble (w));
+            printf ("\" %012"PRIo64" %s\n", w, disAssemble (w));
             if (w & 0200)
                 printf ("\" inhibit on\n");
 #else
@@ -2097,8 +2098,8 @@ int mainOLD (int argc, char * argv [])
                     printf ("\tinhibit\toff\n");
                     wasInhibit = 0;
                 }
-                //printf ("\toct\t%012llo\n", w);
-                printf("%s\t\"%012llo\n", disAssembleOCT(w), w);
+                //printf ("\toct\t%012"PRIo64"o\n", w);
+                printf("%s\t\"%012"PRIo64"o\n", disAssembleOCT(w), w);
             }
             else
             {
@@ -2114,7 +2115,7 @@ int mainOLD (int argc, char * argv [])
                         printf ("\tinhibit\toff\n");
                     wasInhibit = 0;
                 }
-                printf ("\t%s\t\" %012llo\n", disAssemble (w), w);
+                printf ("\t%s\t\" %012"PRIo64"o\n", disAssemble (w), w);
             }
 #endif
         }

@@ -36,9 +36,9 @@
 #include "mst.h"
 #include "bit36.h"
 
-typedef uint16_t word9;
-typedef uint64_t word36;
-typedef unsigned int uint;
+//typedef uint16_t word9;
+//typedef uint64_t word36;
+//typedef unsigned int uint;
 
 static uint8_t blk [mst_blksz_bytes];
 static uint8_t blk_ascii [mst_blksz_word9];

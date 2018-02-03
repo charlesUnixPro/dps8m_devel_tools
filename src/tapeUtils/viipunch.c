@@ -19,11 +19,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 
 typedef uint64_t word36;
 
 #define MASKBITS(x)     ( ~(~((uint64_t)0)<<x) )   // lower (x) bits all ones
 
+#if 0
 //
 //  getbit
 //     Get a single bit. offset can be bigger when word size
@@ -48,7 +50,9 @@ static uint8_t getbit (void * bits, int offset)
     //printf ("offset %d, byte_offset %d, bit_offset %d, byte %x, bit %x\n", offset, byte_offset, bit_offset, p [byte_offset], byte);
     return byte;
   }
+#endif
 
+#if 0
 //
 // extr
 //    Get a string of bits (up to 64)
@@ -62,10 +66,11 @@ static uint64_t extr (void * bits, int offset, int nbits)
       {
         n <<= 1;
         n |= getbit (bits, i + offset);
-        //printf ("%012lo\n", n);
+        //printf ("%012"PRIo64"\n", n);
       }
     return n;
   }
+#endif
 
 //  getbits36 (data, starting bit, number of bits)
 
@@ -73,7 +78,7 @@ static inline word36 getbits36(word36 x, uint i, uint n) {
     // bit 35 is right end, bit zero is 36th from the right
     int shift = 35-(int)i-(int)n+1;
     if (shift < 0 || shift > 35) {
-        fprintf (stderr, "getbits36: bad args (%012lo,i=%d,n=%d)\n", x, i, n);
+        fprintf (stderr, "getbits36: bad args (%012"PRIo64",i=%d,n=%d)\n", x, i, n);
         return 0;
     } else
         return (x >> (unsigned) shift) & ~ (~0U << n);
@@ -83,7 +88,7 @@ static inline word36 setbits36(word36 x, uint p, uint n, word36 val)
 {
     int shift = 36 - (int) p - (int) n;
     if (shift < 0 || shift > 35) {
-        fprintf (stderr, "setbits36: bad args (%012lo,pos=%d,n=%d)\n", x, p, n);
+        fprintf (stderr, "setbits36: bad args (%012"PRIo64",pos=%d,n=%d)\n", x, p, n);
         return 0;
     }
     word36 mask = ~ (~0U<<n);  // n low bits on
@@ -99,7 +104,7 @@ static inline void putbits36 (word36 * x, uint p, uint n, word36 val)
     int shift = 36 - (int) p - (int) n;
     if (shift < 0 || shift > 35)
       {
-        fprintf (stderr, "putbits36: bad args (%012lo,pos=%d,n=%d)\n", * x, p, n);
+        fprintf (stderr, "putbits36: bad args (%012"PRIo64",pos=%d,n=%d)\n", * x, p, n);
         return;
       }
     word36 mask = ~ (~0U << n);  // n low bits on
@@ -185,7 +190,7 @@ static int getCardImage (void)
       return 0;
     if (n != sizeof (card))
       fprintf (stderr, "short read %ld\n", n);
-//fprintf (stderr, "%012lo\n", card [0]);
+//fprintf (stderr, "%012"PRIo64"\n", card [0]);
     return 1;
   }
 
@@ -215,19 +220,19 @@ static void from (void)
           continue;
 
         word36 tag =   getbits36 (card [0], 18,  3);       
-        //fprintf (stderr, "%lo %lo\n", seven, five);
-        //fprintf (stderr, "%lo\n", tag);
+        //fprintf (stderr, "%"PRIo64" %"PRIo64"\n", seven, five);
+        //fprintf (stderr, "%"PRIo64"\n", tag);
 
         word36 cnthi = getbits36 (card [0],  3,  6);       
         word36 cntlo = getbits36 (card [0], 12,  6);       
         word36 cnt = (cnthi << 6) | cntlo;
-        //fprintf (stderr, "%lo\n", cnt);
+        //fprintf (stderr, "%"PRIo64"\n", cnt);
 
         word36 seq   = getbits36 (card [0], 21, 15);       
-        //fprintf (stderr, "%lo\n", seq);
+        //fprintf (stderr, "%"PRIo64"\n", seq);
         if (seq != seqno)
           {
-            fprintf (stderr, "out of seq; found %ld, expected %ld\n", seq, seqno);
+            fprintf (stderr, "out of seq; found %"PRId64", expected %"PRId64"\n", seq, seqno);
             exit (1);
           }
         seqno ++;
@@ -254,11 +259,11 @@ static void from (void)
              check += carry;
              check &= MASK36;
              if (check != cksm)
-               fprintf (stderr, "checksum %012lo, expected %012lo\n", check, cksm);
+               fprintf (stderr, "checksum %012"PRIo64", expected %012"PRIo64"\n", check, cksm);
           }
         if (tag) // last card
           {
-            word36 bitcnt = card [2];
+            //word36 bitcnt = card [2];
           }
         else // data card
           {
@@ -300,7 +305,7 @@ static int getWord36 (word36 * wp)
           return 0;
         if (n != 5)
           {
-            fprintf (stderr, "short read of 5 got %ld\n", n);
+            fprintf (stderr, "short read of 5 got %"PRId64"\n", n);
             //exit (1);
           }
 //printf ("b9e %6d %03o %03o %03o %03o %03o %03o %03o %03o %03o\n", inputWordCnt, b9 [0], b9 [1], b9 [2], b9 [3], b9 [4], b9 [5], b9 [6], b9 [7], b9 [8]);
@@ -346,7 +351,7 @@ static void writeCard (void)
     for (int i = 0; i < cardWords36; i ++)
       {
         put36 (card [i], & writeCardBuffer [0], i);
-        //fprintf (stderr, " %012lo", card [i]);
+        //fprintf (stderr, " %012"PRId64"", card [i]);
       }
     //fprintf (stderr, "\n");
     write (STDOUT_FILENO, writeCardBuffer, writeCardBufferSz);
@@ -409,7 +414,7 @@ static void to (void)
         printf ("%d\n", nw);
         for (int i = 0; i < nw; i ++)
           {
-            printf ("  %3d %012lo\n", i, buffer [i]);
+            printf ("  %3d %012"PRId64"\n", i, buffer [i]);
           }
 #endif
         memset (card, 0, sizeof (card));
@@ -421,7 +426,7 @@ static void to (void)
             putbits36 (& card [0], 12,  6, (nw >> 0) & 077);  // cntlo
             putbits36 (& card [0], 18,  3,               0);  // tag
             putbits36 (& card [0], 21, 15,       cardSeqNo);  // seq
-//fprintf (stderr, "seq %d nw %d %012lo\n", cardSeqNo, nw, card [0]);
+//fprintf (stderr, "seq %d nw %d %012"PRId64"\n", cardSeqNo, nw, card [0]);
             for (int i = 0; i < nw; i ++)
               {
                 card [2 + i] = buffer [i]; // data

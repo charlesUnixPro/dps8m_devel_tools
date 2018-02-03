@@ -22,6 +22,7 @@
 #include <libgen.h>
 #include <string.h>
 #include <stdbool.h>
+#include <inttypes.h>
 
 // Each tape block 
 //
@@ -205,7 +206,7 @@ static word72 cumulative = 0;
 static void cksum (word36 * a, word1 * carry, word36 val, bool rotate)
   {
     //word36 val = extr36 (& blk [0], idx);
-//printf ("in %12lo %o %12lo\n", * a, * carry, val);
+//printf ("in %12"PRIo64" %o %12"PRIo64"\n", * a, * carry, val);
     (* a) += val + * carry;
     (* carry) = ((* a) & BIT37) ? 1 : 0;
     (* a) &= MASK36;
@@ -215,7 +216,7 @@ static void cksum (word36 * a, word1 * carry, word36 val, bool rotate)
         (* a) |= ((* a) & BIT37) ? 1 : 0;
         (* a) &= MASK36;
       }
-//printf ("out %12lo %o\n", * a, * carry);
+//printf ("out %12"PRIo64" %o\n", * a, * carry);
   }
      
 static void setHdr (word18 ndatabits, 
@@ -301,7 +302,7 @@ static void putStr (int offset, char * str, int len)
             if (os * 4 + i < sl)
               {
                 w |= ((word36) str [os * 4 + i]) << ((3 - i) * 9);
-//printf ("  %012lo\n", w);
+//printf ("  %012"PRIo64"\n", w);
               }
             else
               w |= ((word36) ' ') << ((3 - i) * 9);
@@ -363,12 +364,12 @@ static ssize_t readASCII (int datafd, void * buf, size_t count)
             if (os + i < nr)
               {
                 w |= ((word36) abuf [os + i]) << ((3 - i) * 9);
-//printf ("  %012lo\n", w);
+//printf ("  %012"PRIo64"\n", w);
               }
             else
               w |= ((word36) '\000') << ((3 - i) * 9);
           }
-//printf ("put36 %012lo %p %d\n", w, abuf, os);
+//printf ("put36 %012"PRIo64" %p %d\n", w, abuf, os);
         put36 (w, buf, os / 4);
       }
 

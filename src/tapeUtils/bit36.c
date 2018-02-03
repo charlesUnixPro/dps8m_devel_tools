@@ -233,7 +233,7 @@ uint64_t extr (void * bits, int offset, int nbits)
       {
         n <<= 1;
         n |= getbit (bits, i + offset);
-        //printf ("%012lo\n", n);
+        //printf ("%012"PRIo64"\n", n);
       }
     return n;
   }

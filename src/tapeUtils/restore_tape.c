@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <inttypes.h>
 #include "simhtapes.h"
 
 #define max(a,b) \
@@ -119,7 +120,7 @@ static int read_mst_blk (int fd)
           continue;
 
         word36 w6 = extr36 (nxt, 5);     // flags
-        //printf ("flags %036lo\n", w6);
+        //printf ("flags %036"PRIo64"\n", w6);
         word36 repeat = w6 & (1LU << 20);
         if (repeat)
           {
@@ -165,25 +166,25 @@ static int read_mst_blk (int fd)
 
     if (w1 != header_c1)
       {
-        printf ("c1 wrong %012lo\n", w1);
+        printf ("c1 wrong %012"PRIo64"\n", w1);
       }
     if (w8 != header_c2)
       {
-        printf ("c2 wrong %012lo\n", w8);
+        printf ("c2 wrong %012"PRIo64"\n", w8);
       }
     if (t1 != trailer_c1)
       {
-        printf ("t1 wrong %012lo\n", t1);
+        printf ("t1 wrong %012"PRIo64"\n", t1);
       }
     if (t8 != trailer_c2)
       {
-        printf ("t2 wrong %012lo\n", t8);
+        printf ("t2 wrong %012"PRIo64"\n", t8);
       }
 
     word36 totbits = w5 & 0777777UL;
     if (totbits != 36864) // # of 9-bit bytes
       {
-        printf ("totbits wrong %ld\n", totbits);
+        printf ("totbits wrong %"PRId64"\n", totbits);
       }
 
     rec_num = (w4 >> 18) & 0777777UL;
@@ -428,6 +429,7 @@ static void write_ascii_data (int fdout, uint n, uint char_cnt)
       }
   }
 
+#if 0
 static int check_ASCII (uint n, uint cnt)
   {
     for (int i = 0; i < cnt; i ++)
@@ -446,6 +448,7 @@ static int check_ASCII (uint n, uint cnt)
       }
     return 1;
   }
+#endif
 
 int main (int argc, char * argv [])
   {
@@ -688,7 +691,7 @@ int main (int argc, char * argv [])
             n_words_in_blk = 1024;
             data_start=0;
           }
-        off_t bw = lseek (fdout, 0, SEEK_CUR); 
+        //off_t bw = lseek (fdout, 0, SEEK_CUR); 
         //printf ("%ld bytes written; %ld bits,%.1f word36, %.1f word9\n", bw, bw * 8, ((float) bw) * 8 / 36, ((float) bw) * 8 / 9);
         close (fdout);
         if (isASCII)
@@ -721,7 +724,7 @@ int main (int argc, char * argv [])
             exit (1);
           }
         char mbuf [256];
-        sprintf (mbuf, "bitcnt: %ld\n", bit_count);
+        sprintf (mbuf, "bitcnt: %"PRId64"\n", bit_count);
         write (fdoutm, mbuf, strlen (mbuf));
         close (fdoutm);
 

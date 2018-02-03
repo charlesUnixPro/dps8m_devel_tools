@@ -63,6 +63,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <unistd.h>
+#include <inttypes.h>
 
 #include "mst.h"
 #include "bit36.h"
@@ -87,13 +88,13 @@ printf ("\n\n");
     // " compute prb pointer
     //  060005   ldq     prb.mstrh+mstr_header.data_bits_used
     word36 q = extr36 (buf, 060005 - buf_addr);
-printf ("q %06lo\n", q);
+printf ("q %06"PRIo64"\n", q);
     //           div     36,du  " number of words in QL
     q = ((q >> 18) & 0777777) / 36;
     // adq     1,dl            " plus one
 // It works when I don't do this; something about tally that I am not grasping
 //    q ++;
-printf ("q %06lo\n", q);
+printf ("q %06"PRIo64"\n", q);
     //  qls     18-12           " in Q(18:29)
     tally = q;
     //  60011 adq     prb.data,du     " whole pointer
@@ -123,27 +124,27 @@ int main (int argc, char * argv [])
 
     // 060011 lda     prb.data  " less SLTE size
     word36 prb_data = extr36 (buf, 060011 - buf_addr); 
-printf ("prb_data %06lo\n", prb_data);
+printf ("prb_data %06"PRIo64"\n", prb_data);
 
     // ada 1,dl " and control word
     prb_data += 1;
-printf ("and ctrl wd %06lo\n", prb_data);
+printf ("and ctrl wd %06"PRIo64"\n", prb_data);
     // als 18 // shift into address field
     // asa     prb.prb_it      " adjust address                
     address += prb_data;
-printf ("address adjust %06lo (%06lo)\n", address, address + buf_addr);
+printf ("address adjust %06"PRIo64" (%06"PRIo64")\n", address, address + buf_addr);
 
     // arl     12
     // neg     0
     // asa     prb.prb_it " and tally
     tally -= prb_data;
-printf ("tally adjust %06lo\n", tally);
+printf ("tally adjust %06"PRIo64"\n", tally);
 
     // lxl4    prb.prb_it,id   " bound_bootload_0 control word 
     /* word18 */ uint32_t idx4 = extr36 (buf, address) & 0777777;
     address ++;
     tally --;
-printf ("ctl wd %06o addr %06lo tally %06lo\n", idx4, address, tally);
+printf ("ctl wd %06o addr %06"PRIo64" tally %06"PRIo64"\n", idx4, address, tally);
 
 next_record:;
 
@@ -152,12 +153,12 @@ next_record:;
 
     // assuming address is 72 bit aligned and tally even
     // copy from prb to code segment
-printf ("write address %06lo, tally %06lo\n", address, tally);
+printf ("write address %06"PRIo64", tally %06"PRIo64"\n", address, tally);
     write (fout, buf + address * 36 / 8, tally * 36 / 8);
 
     idx4 -= tally;
 
-printf ("ctl wd %06o addr %06lo tally %06lo\n", idx4, address, tally);
+printf ("ctl wd %06o addr %06"PRIo64" tally %06"PRIo64"\n", idx4, address, tally);
     if (idx4 > 0)
       {
         rd_tape (fin);

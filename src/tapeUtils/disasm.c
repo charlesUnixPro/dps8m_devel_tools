@@ -19,6 +19,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <inttypes.h>
 
 #include "bit36.h"
 
@@ -957,7 +958,7 @@ int main (int argc, char * argv [])
                     printf ("\tinhibit\toff\n");
                     wasInhibit = 0;
                   }
-                printf ("\toct\t%012lo\n", w);
+                printf ("\toct\t%012"PRIo64"\n", w);
               }
             else
               {
@@ -973,7 +974,7 @@ int main (int argc, char * argv [])
                       printf ("\tinhibit\toff\n");
                     wasInhibit = 0;
                   }
-                printf ("\t%s\t\" %012lo\n", disAssemble (w), w);
+                printf ("\t%s\t\" %012"PRIo64"\n", disAssemble (w), w);
               }
 #endif
           }

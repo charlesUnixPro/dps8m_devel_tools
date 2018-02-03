@@ -21,14 +21,15 @@
 #include <fcntl.h>
 #include <ctype.h>
 #include <string.h>
+#include <inttypes.h>
 
 
 #include "mst.h"
 #include "bit36.h"
 
-typedef uint16_t word9;
-typedef uint64_t word36;
-typedef unsigned int uint;
+//typedef uint16_t word9;
+//typedef uint64_t word36;
+//typedef unsigned int uint;
 
 static uint8_t blk [mst_blksz_word9];
 static uint8_t blk_ascii [mst_blksz_word9];
@@ -173,7 +174,7 @@ static void mfile (char * fname)
         word36 totbits = p -> thdr [4] & 0777777UL;
         if (totbits != 36864) // # of 9-bit bytes
           {
-            printf ("  totbits wrong %ld\n", totbits);
+            printf ("  totbits wrong %"PRId64"\n", totbits);
           }
 
         word36 rec_num = (p -> thdr [3] >> 18) & 0777777UL;
@@ -183,7 +184,7 @@ static void mfile (char * fname)
 
         struct theader_9 * p_hdr9 = (struct theader_9 *) blk_ascii;
 
-        printf ("  mst header  rec_num %6lu  file_num %6lu  nbits %6lu  admin %lu\n",
+        printf ("  mst header  rec_num %6"PRIu64"  file_num %6"PRIu64"  nbits %6"PRIu64"  admin %"PRIu64"\n",
           rec_num, file_num, nbits, admin); 
 
         if (strncmp (p_hdr9 -> zz1, const_zz, 32) == 0 &&
@@ -229,7 +230,7 @@ printf ("dunno\n");
             word36 nbits = (boot_p -> thdr [4] >> 18) & 0777777UL;
             word36 admin = boot_p -> thdr [5] & 0400000000000UL;
 
-            printf ("  mst boot header  rec_num %6lu  file_num %6lu  nbits %6lu  admin %lu\n",
+            printf ("  mst boot header  rec_num %6"PRIu64"  file_num %6"PRIu64"  nbits %6"PRIu64"  admin %"PRIu64"\n",
               rec_num, file_num, nbits, admin); 
 
             print_string ("  Installation ID: ", 32 + 32, 32);
