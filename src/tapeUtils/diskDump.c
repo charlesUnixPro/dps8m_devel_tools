@@ -89,7 +89,8 @@ static void prints (word36 * sectorBuffer, int cnt)
 
 int main (int argc, char * argv [])
   {
-    diskFD = open ("20184.dsk", O_RDONLY);
+    //diskFD = open ("20184.dsk", O_RDONLY);
+    diskFD = open (argv[1], O_RDONLY);
     word36 sectorBuffer [SECTOR_SZ_IN_W36];
     mread36 (0, sectorBuffer);
 

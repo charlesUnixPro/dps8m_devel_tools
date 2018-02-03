@@ -12,7 +12,6 @@
 typedef uint16_t word9;
 typedef uint32_t word18;
 typedef uint64_t word36;
-typedef uint64_t word36;
 typedef unsigned int uint;
 typedef __uint128_t word72;
 

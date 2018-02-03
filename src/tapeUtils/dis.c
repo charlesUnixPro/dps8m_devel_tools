@@ -1801,7 +1801,7 @@ char *disAssembleMW(word36* ins)
         case 0305: // dtb
             mf1 = GET_MF1(instruction);
             mf2 = GET_MF2(instruction);
-            sprintf(result, "\t(%s),(%s) \"%012llo\n", decomposeMF(mf1), decomposeMF(mf2), instruction);
+            sprintf(result, "\t(%s),(%s) \"%012lo\n", decomposeMF(mf1), decomposeMF(mf2), instruction);
             strcatf(result, "\t%s \"%012llo\n", disassembleDESCf(ins[1], mf1), ins[1]);
             strcatf(result, "\t%s \"%012llo\n", disassembleDESCa(ins[2], mf2), ins[2]);
             break;
@@ -1994,7 +1994,7 @@ void disassembleMemory(word36 *mem, int nWords, long *offset)
                     wasInhibit = 0;
                 }
                 //printf ("\toct\t%012llo\n", w);
-                printf("%s\t\" %012llo\n", disAssembleOCT(w), w);
+                printf("%s\t\" %012lo\n", disAssembleOCT(w), w);
             }
             else
             {
