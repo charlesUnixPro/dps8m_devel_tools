@@ -17,6 +17,19 @@ tape image format:
 a single 32 bit word of zero represents a file mark
 */
 
+// From sim_tape.h
+#define MTR_TMK         0x00000000                      /* tape mark */
+#define MTR_EOM         0xFFFFFFFF                      /* end of medium */
+#define MTR_GAP         0xFFFFFFFE                      /* primary gap */
+#define MTR_RRGAP       0xFFFFFFFF                      /* reverse read half gap */
+#define MTR_FHGAP       0xFFFEFFFF                      /* fwd half gap (overwrite) */
+#define MTR_RHGAP       0xFFFF0000                      /* rev half gap (overwrite) */
+#define MTR_M_RHGAP     (~0x000080FF)                   /* range mask for rev gap */
+#define MTR_MAXLEN      0x00FFFFFF                      /* max len is 24b */
+#define MTR_ERF         0x80000000                      /* error flag */
+#define MTR_F(x)        ((x) & MTR_ERF)                 /* record error flg */
+#define MTR_L(x)        ((x) & ~MTR_ERF)                /* record length */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -36,7 +49,7 @@ a single 32 bit word of zero represents a file mark
 int main (int argc, char * argv [])
   {
     int fd;
-    int32_t blksiz;
+    uint32_t blksiz;
     int32_t blksiz2;
     //fd = open ("20184.tap", O_RDONLY);
     fd = open (argv [1], O_RDONLY);
@@ -57,11 +70,37 @@ int main (int argc, char * argv [])
             printf ("can't read blksiz\n");
             exit (1);
           }
-        printf ("blksiz %d\n", blksiz);
+        printf ("blksiz %u\n", blksiz);
 
-        if (! blksiz)
+        //if (! blksiz)
+        if (blksiz == MTR_TMK)
           {
             printf ("tapemark\n");
+          }
+        else if (blksiz == MTR_EOM)
+          {
+            printf ("end-of-medium\n");
+            break;
+          }
+        else if (blksiz == MTR_GAP)
+          {
+            printf ("primary gap");
+          }
+        else if (blksiz == MTR_RRGAP)
+          {
+            printf ("reverse read half gap");
+          }
+        else if (blksiz == MTR_FHGAP)
+          {
+            printf ("fwd half gap");
+          }
+        else if (blksiz == MTR_RHGAP)
+          {
+            printf ("rev half gap");
+          }
+        else if (blksiz > MTR_MAXLEN)
+          {
+            printf ("unknown metadata type 0x%x\n", blksiz);
           }
         else
           {
