@@ -46,10 +46,10 @@ test:
 
 " Print "Console test"
 
-	emcall	8
+	"emcall	8
 	"absa	msg1
-	eaa	msg1
-	emcall	16
+	"eaa	msg1
+	"emcall	16
 
 " Mask interrupts
 
@@ -59,8 +59,8 @@ test:
 
 " Print "Expect ALERT"
 
-	eaa	msg2
-	emcall	16
+	"eaa	msg2
+	"emcall	16
 
 " Send an ALERT
 
@@ -70,9 +70,9 @@ test:
 
 " Print 'Expect "Hello, world"'
 
-	emcall	8
-	eaa	msg3
-	emcall	16
+	"emcall	8
+	"eaa	msg3
+	"emcall	16
 
 	lda	lpw2
 	sta	connect_lpw
@@ -80,7 +80,7 @@ test:
 	sta	console_lpw
 	cioc	cioc_port
 
-	emcall	18
+	"emcall	18
 
 " Data
 

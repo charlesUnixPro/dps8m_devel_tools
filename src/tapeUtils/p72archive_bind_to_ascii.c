@@ -9,7 +9,7 @@
  at https://sourceforge.net/p/dps8m/code/ci/master/tree/LICENSE
  */
 
-// p72archive_to_ascii p72File asciiDir
+// p72archive_bind_to_ascii p72File asciiDir
 // Only extract the .bind components, if any
 
 #include <stdio.h>
@@ -53,7 +53,7 @@ int main (int argc, char * argv [])
   {
     if (argc != 3)
       {
-        fprintf (stderr, "Usage: p72_to_ascii p72File asciiFile\n");
+        fprintf (stderr, "Usage: p72archive_bind_to_ascii archive directory\n");
         exit (1);
       }
     int fdin;

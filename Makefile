@@ -8,11 +8,11 @@
 # at http://example.org/project/LICENSE.
 
 all:
-	cd src/dps8 && $(MAKE)
+	cd src/tapeUtils && $(MAKE)
 
-install:
-	cd src/dps8 && $(MAKE) install
+#install:
+#	cd src/dps8 && $(MAKE) install
 
 clean:
-	cd src/dps8 && $(MAKE) clean
+	cd src/tapeUtils && $(MAKE) clean
 

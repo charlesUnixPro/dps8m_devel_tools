@@ -742,7 +742,6 @@ static char path [4097]; // sanatized top_level_dir/dir_name
 static char filename [4097]; // sanatized elem_name
 static char dirname [4097]; // sanatized dir_name
 static char fullname [4097]; // sanatized top_level_dir/dir_name/elem_name
-static char dosname [4097]; 
 static char asciiname [4097]; 
 static char mdname [4097]; 
 static char mkcmd [4097];
@@ -1071,12 +1070,7 @@ printf ("%04o:%04o\n", n_records, lros);
               }
           }
 
-        strcpy (dosname, fullname);
-        for (int i = 0; i < strlen (dosname); i ++)
-          if (dosname [i] == '/')
-            dosname [i] = '\\';
-
-        printf ("      Creating BINARY file %s (%s)\n", dosname, ext);
+        printf ("      Creating BINARY file %s (%s)\n", fullname, ext);
 
         int fdout = open (fullname, O_WRONLY | O_CREAT | O_TRUNC, 0664);
         if (fdout < 0)
@@ -1090,7 +1084,7 @@ printf ("%04o:%04o\n", n_records, lros);
           {
             strcpy (asciiname, fullname);
             strcat (asciiname, ".ascii");
-            printf ("      Creating ASCII file %s (%s)\n", dosname, ext);
+            printf ("      Creating ASCII file %s (%s)\n", fullname, ext);
             fdouta = open (asciiname, O_WRONLY | O_CREAT | O_TRUNC, 0664);
             if (fdouta < 0)
               {

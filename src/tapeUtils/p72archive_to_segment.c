@@ -9,7 +9,7 @@
  at https://sourceforge.net/p/dps8m/code/ci/master/tree/LICENSE
  */
 
-// p72archive_to_ascii p72File asciiDir
+// p72archive_to_segment archive directory
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,7 +53,7 @@ int main (int argc, char * argv [])
   {
     if (argc != 3)
       {
-        fprintf (stderr, "Usage: p72_to_ascii p72File asciiFile\n");
+        fprintf (stderr, "Usage: p72archive_to_segment archive directory\n");
         exit (1);
       }
     int fdin;
@@ -73,7 +73,8 @@ int main (int argc, char * argv [])
     if (residue && residue != 5)
       fprintf (stderr, "residue %lu\n", residue);
       
-    word36 * big = (word36 *) malloc (sizeof (word36) * nwords);
+    // +1 ensures this is long enough when nwords is odd
+    word36 * big = (word36 *) malloc (sizeof (word36) * (nwords + 1));
     for (int i = 0; i < nwords; i += 2)
       {
         ssize_t sz;
@@ -98,6 +99,11 @@ int main (int argc, char * argv [])
         if (big [i]     != 0014012012012lu ||
             big [i + 1] != 0017012011011lu)
           {
+            if (i == nwords - 1 && big [i] == 0)
+              {
+                fprintf (stderr, "ignoring one word of 0 padding at end\n");
+                break;
+              }
             fprintf (stderr, "missing hdr\n");
             exit (1);
           }
@@ -129,7 +135,9 @@ printf ("bitcnt %012"PRIo64"%012"PRIo64"\n", big [i + 21], big [i + 22]);
         bc [6] = (big [i + 22] >>  9) & 0177;
         bc [7] = (big [i + 22] >>  0) & 0177;
         bc [8] = 0;
-//printf ("bitcnt %s\n", bc);
+        long int bitcnt = atol(bc);
+//printf ("bitcnt %ld\n", bitcnt);
+
         for (i += 3; i < nwords; i ++)
           {
             //printf ("try %d (%u)\n", i, i);
@@ -146,14 +154,9 @@ printf ("bitcnt %012"PRIo64"%012"PRIo64"\n", big [i + 21], big [i + 22]);
         //printf ("hdr len %u (%o)\n", i - hdrStart, i - hdrStart);
 
         // find end
-        uint j;
-        for (j = i; j < nwords; j ++)
-          {
-            if (big [j]     == 0014012012012lu &&
-                big [j + 1] == 0017012011011lu)
-//printf ("j %u\n", j);
-              break;
-          }
+        // While bitcnt is in bits, archive ensures that the data is padded out
+        // to a full word at the end of the file.
+        uint j = i + ((bitcnt + 35) / 36);
 
         // j now points to the next hdr or just past the buffer end;
         //printf ("component %d - %d (%o - %o)\n", i, j - 1, (i / 4), ((j - 1) / 4));
@@ -168,6 +171,13 @@ printf ("bitcnt %012"PRIo64"%012"PRIo64"\n", big [i + 21], big [i + 22]);
 
 //printf ("%d\n", leng);
 printf ("start %d %o leng %d %o\n", i, i, leng, leng);
+
+        if (i + leng > nwords)
+          {
+            fprintf (stderr, "archive is truncated\n");
+            exit (1);
+          }
+
         char fname [strlen (dname) + 32 + 3];
         strcpy (fname, dname);
         strcat (fname, segname);
@@ -202,7 +212,7 @@ printf ("start %d %o leng %d %o\n", i, i, leng, leng);
             exit (1);
           }
         char bcbuf [128];
-        sprintf (bcbuf, "bitcnt: %s\n", bc);
+        sprintf (bcbuf, "bitcnt: %ld\n", bitcnt);
         write (fdout, bcbuf, strlen (bcbuf));
         close (fdout);
 

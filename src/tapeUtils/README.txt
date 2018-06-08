@@ -81,7 +81,7 @@ Manipulating Multics segments
     p72archive_to_ascii extracts segments from a Multics archive and
     writes them as ASCII files.
 
-    Usage: p72archive_bind_to_ascii archive directory
+    Usage: p72archive_to_ascii archive directory
 
     'archive' is an Multics archive segment in packed72 format and 
     'directory' is the directory that the segments will be extracted to.
@@ -94,7 +94,7 @@ Manipulating Multics segments
     p72archive_to_segment extracts segments from a Multics archive and
     writes them as packed72 files.
 
-    Usage: p72archive_bind_to_segment archive directory
+    Usage: p72archive_to_segment archive directory
 
     'archive' is an Multics archive segment in packed72 format and 
     'directory' is the directory that the segments will be extracted to.

@@ -381,7 +381,6 @@ static char path [4097]; // sanatized top_level_dir/dir_name
 static char filename [4097]; // sanatized elem_name
 static char dirname [4097]; // sanatized dir_name
 static char fullname [4097]; // sanatized top_level_dir/dir_name/elem_name
-static char dosname [4097]; 
 static char asciiname [4097]; 
 static char mdname [4097]; 
 static char mkcmd [4097];
@@ -481,6 +480,7 @@ int main (int argc, char * argv [])
     // do while( ªEOF );
     for (;;) 
       {
+      next_header:
         if (! is_file_hdr())
           {
             //printf ("searching for header block\n");
@@ -639,12 +639,7 @@ int main (int argc, char * argv [])
               }
           }
 
-        strcpy (dosname, fullname);
-        for (int i = 0; i < strlen (dosname); i ++)
-          if (dosname [i] == '/')
-            dosname [i] = '\\';
-
-        printf ("      Creating BINARY file %s (%s)\n", dosname, ext);
+        printf ("      Creating BINARY file %s (%s)\n", fullname, ext);
 
         int fdout = open (fullname, O_WRONLY | O_CREAT | O_TRUNC, 0664);
         if (fdout < 0)
@@ -658,7 +653,7 @@ int main (int argc, char * argv [])
           {
             strcpy (asciiname, fullname);
             strcat (asciiname, ".ascii");
-            printf ("      Creating ASCII file %s (%s)\n", dosname, ext);
+            printf ("      Creating ASCII file %s (%s)\n", fullname, ext);
             fdouta = open (asciiname, O_WRONLY | O_CREAT | O_TRUNC, 0664);
             if (fdouta < 0)
               {
@@ -681,11 +676,23 @@ int main (int argc, char * argv [])
             seg_cnt = seg_cnt - n_words_in_blk;
             if (seg_cnt <= 0)
               break;
+            int last_next_tape = next_tape;
             int rc = get_mst_record (& fd);
             if (rc < 0)
               {
                 printf ("unexpected eof 2\n");
                 exit (1);
+              }
+            if (next_tape != last_next_tape)
+              {
+                // The tape has changed in the middle of a segment.
+                // When reloader sees this, it immediately goes back to
+                // looking for a header again.
+                printf("End of tape in middle of segment - abandoning %s\n", fullname);
+                close (fdout);
+                if (isASCII)
+                  close (fdouta);
+                goto next_header;
               }
             char_in_blk = 4096;
             n_words_in_blk = 1024;

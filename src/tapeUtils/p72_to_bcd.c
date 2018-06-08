@@ -9,7 +9,7 @@
  at https://sourceforge.net/p/dps8m/code/ci/master/tree/LICENSE
  */
 
-// p72_to_ascii p72File asciiFile
+// p72_to_bcd p72File bcdFile
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,7 +54,7 @@ int main (int argc, char * argv [])
   {
     if (argc != 3)
       {
-        fprintf (stderr, "Usage: p72_to_ascii p72File asciiFile\n");
+        fprintf (stderr, "Usage: p72_to_bcd p72File bcdFile\n");
         exit (1);
       }
     int fdin;

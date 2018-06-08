@@ -40,6 +40,37 @@ static void makeDirs (char * name)
     free (outname);
   }
 
+// Read the metadata file for a .p72 file, if present.
+static void read_md (const char * name, long int * bitcnt)
+  {
+    * bitcnt = -1;
+
+    // Given "/foo/bar", produce "/foo/.bar.md".
+    char * mdname = calloc (strlen (name) + 5, 1);
+    strcpy (mdname, name);
+    char * start = strrchr (mdname, '/');
+    if (start)
+      {
+        ++start;
+      }
+    else
+      {
+        start = mdname;
+      }
+    memmove (start + 1, start, strlen (start) + 1);
+    *start = '.';
+    strcat (start, ".md");
+
+    FILE *f = fopen (mdname, "r");
+    free (mdname);
+
+    if (f)
+      {
+        fscanf (f, "bitcnt: %ld\n", bitcnt);
+      }
+    fclose (f);
+  }
+
 int main (int argc, char * argv [])
   {
     if (argc != 3)
@@ -47,6 +78,7 @@ int main (int argc, char * argv [])
         fprintf (stderr, "Usage: p72_to_ascii p72File asciiFile\n");
         exit (1);
       }
+
     int fdin;
     fdin = open (argv [1], O_RDONLY);
     if (fdin < 0)
@@ -54,6 +86,38 @@ int main (int argc, char * argv [])
         fprintf (stderr, "can't open input file <%s>\n", argv [1]);
         exit (1);
       }
+
+    struct stat st;
+    if (fstat (fdin, &st) < 0)
+      {
+        fprintf (stderr, "fstat failed on <%s>\n", argv [1]);
+        exit (1);
+      }
+    // We're reading 8 bit input and repacking into 9 bit output.
+    long int nchars = (st.st_size * 8L) / 9;
+
+    long int bitcnt;
+    read_md (argv [1], & bitcnt);
+    if (bitcnt != -1)
+      {
+        if ((bitcnt % 9) != 0)
+          {
+            fprintf (stderr, "md bitcount %ld is not a multiple of 9 for <%s>\n", bitcnt, argv [1]);
+            exit (1);
+          }
+
+        // There should be at most 72 - 9 = 63 bits = 7 9-bit chars of padding at the end.
+        long int bcchars = bitcnt / 9;
+        if (bcchars < (nchars - 7) || bcchars > nchars)
+          {
+            fprintf (stderr, "md char count %ld is inconsistent with input char count %ld for <%s>\n",
+                     bcchars, nchars, argv [1]);
+            exit (1);
+          }
+
+        nchars = bcchars;
+      }
+
     makeDirs (argv [2]);
     int fdout;
     fdout = creat (argv [2], 0777);
@@ -63,7 +127,7 @@ int main (int argc, char * argv [])
         exit (1);
       }
     
-    for (;;)
+    while (nchars > 0)
       {
         ssize_t sz;
 // 72 bits at a time; 2 dps8m words == 9 bytes
@@ -89,7 +153,7 @@ int main (int argc, char * argv [])
 
         static int byteorder [8] = { 3, 2, 1, 0, 7, 6, 5, 4 };
         char buf [8];
-        for (j = 0; j < nch; j ++)
+        for (j = 0; j < nch && nchars > 0; j ++)
           {
             uint64_t c = extr (bytes, byteorder [j] * 9, 9);
             //if (isprint (c))
@@ -97,8 +161,8 @@ int main (int argc, char * argv [])
             //else
               //printf ("\\%03lo", c);
             buf [j] = c & 0177;
-            if (buf [j])
-              write (fdout, & buf [j], 1);
+            write (fdout, & buf [j], 1);
+            nchars--;
           }
         //printf ("\n");
         //write (fdout, buf, nch);
