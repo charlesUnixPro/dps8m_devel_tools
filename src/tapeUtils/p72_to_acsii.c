@@ -30,6 +30,8 @@
 static void makeDirs (char * name)
   {
     //printf (">%s\n", name);
+    if (strcmp (name, "/") == 0)
+      return;
     char * outname = strdup (name);
     char * outdir = dirname (outname);
     if (strlen (outdir) && strcmp (outdir, "."))
@@ -67,8 +69,8 @@ static void read_md (const char * name, long int * bitcnt)
     if (f)
       {
         fscanf (f, "bitcnt: %ld\n", bitcnt);
+        fclose (f);
       }
-    fclose (f);
   }
 
 int main (int argc, char * argv [])
