@@ -94,15 +94,15 @@ OBJS += restore_tape.o simhtapes.o
 restore_tape: restore_tape.o simhtapes.o bit36.o
 restore_tape.o : restore_tape.c bit36.h mst.h simhtapes.h
 
-EXES +=  p72_to_acsii 
-OBJS += p72_to_acsii.o
-p72_to_acsii: p72_to_acsii.o bit36.o
-p72_to_acsii.o: p72_to_acsii.c bit36.h
+EXES +=  p72_to_ascii 
+OBJS += p72_to_ascii.o
+p72_to_ascii: p72_to_ascii.o bit36.o
+p72_to_ascii.o: p72_to_ascii.c bit36.h
 
-EXES +=  p72archive_to_acsii 
-OBJS += p72archive_to_acsii.o
-p72archive_to_acsii: p72archive_to_acsii.o bit36.o
-p72archive_to_acsii.o: p72archive_to_acsii.c bit36.h
+EXES +=  p72archive_to_ascii 
+OBJS += p72archive_to_ascii.o
+p72archive_to_ascii: p72archive_to_ascii.o bit36.o
+p72archive_to_ascii.o: p72archive_to_ascii.c bit36.h
 
 EXES +=  p72archive_to_segment 
 OBJS += p72archive_to_segment.o

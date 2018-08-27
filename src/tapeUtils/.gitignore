@@ -14,8 +14,8 @@ dumpFile
 restore_tape
 restore_toc
 p72archive_to_segment
-p72archive_to_acsii
-p72_to_acsii
+p72archive_to_ascii
+p72_to_ascii
 p72_to_binary
 diskDump
 dis
