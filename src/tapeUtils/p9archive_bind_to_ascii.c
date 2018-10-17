@@ -9,7 +9,12 @@
  at https://sourceforge.net/p/dps8m/code/ci/master/tree/LICENSE
  */
 
-// p72archive_bind_to_ascii p72File asciiDir
+// The web.mit.edu ".9" files are packed 9 bits of data to a little endian
+// 16 bit word.
+
+// Try appending ".9"; if that exists, use it; else use the asciified.
+
+// p9archive_bind_to_ascii p9File asciiDir
 // Only extract the .bind components, if any
 
 #include <stdio.h>
@@ -57,55 +62,53 @@ int main (int argc, char * argv [])
         exit (1);
       }
     int fdin;
-    fdin = open (argv [1], O_RDONLY);
-    if (fdin < 0)
+
+    uint8_t * big = NULL;
+    ssize_t nchars;
+
+// Try name.9
+
+    char name9 [strlen (argv[1] + 3)];
+    strcpy (name9, argv[1]);
+    strcat (name9, ".9");
+
+    fdin = open (name9, O_RDONLY);
+    if (fdin >= 0)
       {
-        fprintf (stderr, "can't open input file '%s'\n", argv[1]);
-        exit (1);
-      }
+        off_t flen = lseek (fdin, 0, SEEK_END);
+        lseek (fdin, 0, SEEK_SET);
 
-    off_t flen = lseek (fdin, 0, SEEK_END);
-    lseek (fdin, 0, SEEK_SET);
+        nchars = (flen + 1) / 2;
+        big = malloc (nchars);
+        uint8_t * bigp = big;
 
-    ssize_t nwords = (flen * 2) / 9u;
-    //printf ("nwords %lu\n", nwords);
-    ssize_t residue = flen % 9u;
-    if (residue && residue != 5)
-      fprintf (stderr, "residue %lu\n", residue);
-      
-    ssize_t nchars = nwords * 4u;
-    uint8_t * big = malloc (nchars);
-    uint8_t * bigp = big;
-
-    for (;;)
-      {
-        ssize_t sz;
-// 72 bits at a time; 2 dps8m words == 9 bytes
-        uint8_t bytes [9];
-        memset (bytes, 0, 9);
-        sz = read (fdin, bytes, 9);
-        if (sz == 0)
-          break;
-// bytes bits  bits/ 9
-//   1     8     0
-//   2    16     1
-//   3    24     2
-//   4    32     3
-//   5    40     4
-//   6    48     5
-//   7    56     6
-//   8    64     7
-//   9    72     8
-
-        int nch = sz - 1;
-
-        int j;
-
-        static int byteorder [8] = { 3, 2, 1, 0, 7, 6, 5, 4 };
-        for (j = 0; j < nch; j ++)
+        for (;;)
           {
-            uint64_t c = extr (bytes, byteorder [j] * 9, 9);
-            * (bigp ++) = c & 0177;
+            ssize_t sz;
+            uint16_t byte = 0;
+            sz = read (fdin, & byte, 2);
+            if (sz == 0)
+              break;
+            * (bigp ++) = (byte>>8) & 0377;
+          }
+      } // if (fdin >= 0)
+    else
+      {
+// Try without the .9; the ascified version
+        fdin = open (argv [1], O_RDONLY);
+        if (fdin >= 0)
+          {
+            off_t flen = lseek (fdin, 0, SEEK_END);
+            lseek (fdin, 0, SEEK_SET);
+
+            nchars = flen;
+            big = malloc (nchars);
+            read (fdin, big, nchars);
+          }
+        else
+          {
+            fprintf (stderr, "can't open input file '%s'\n", argv[1]);
+            exit (1);
           }
       }
 
@@ -125,6 +128,7 @@ int main (int argc, char * argv [])
         static uint8_t hdr [8] = "\014\012\012\012\017\012\011\011";
         if (strncmp ((char *) big + i, (char *) hdr, 8))
           {
+for (uint j = 0; j < 8; j ++) fprintf (stderr, "%03o\n", big[i]);
             fprintf (stderr, "missing hdr %s'\n", argv[1]);
             exit (1);
           }

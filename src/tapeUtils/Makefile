@@ -185,6 +185,11 @@ OBJS += ascii_unarchive.o
 ascii_unarchive: ascii_unarchive.o bit36.o
 ascii_unarchive.o: ascii_unarchive.c bit36.h
 
+EXES += p9archive_bind_to_ascii
+OBJS += p9archive_bind_to_ascii.o
+p9archive_bind_to_ascii: p9archive_bind_to_ascii.o bit36.o
+p9archive_bind_to_ascii.o: p9archive_bind_to_ascii.c bit36.h
+
 OBJS += bit36.o 
 bit36.o : bit36.c bit36.h
 

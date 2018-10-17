@@ -134,7 +134,7 @@ int main (int argc, char * argv [])
         static uint8_t hdr [8] = "\014\012\012\012\017\012\011\011";
         if (strncmp ((char *) big + i, (char *) hdr, 8))
           {
-            fprintf (stderr, "missing hdr\n");
+            fprintf (stderr, "missing hdr '%s'\n", argv[1]);
             exit (1);
           }
         //uint hdrStart = i;
