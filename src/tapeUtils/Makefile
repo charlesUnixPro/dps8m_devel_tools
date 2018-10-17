@@ -180,6 +180,11 @@ OBJS += p72_to_binary.o
 p72_to_binary: p72_to_binary.o bit36.o
 p72_to_binary.o: p72_to_binary.c bit36.h
 
+EXES += ascii_unarchive
+OBJS += ascii_unarchive.o
+ascii_unarchive: ascii_unarchive.o bit36.o
+ascii_unarchive.o: ascii_unarchive.c bit36.h
+
 OBJS += bit36.o 
 bit36.o : bit36.c bit36.h
 
