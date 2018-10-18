@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <string.h>
 
 // trailer length
@@ -35,9 +36,8 @@
 #define LEN4 2283
 #define TEST4 "\"\r\n\"\r\n\"                                          -----------------------------------------------------------\r\n\"\r\n\"\r\n\"\r\n\" Historical Background\r\n\"\r\n"
 
-#define LEN5 2322
-//#define TEST5 "\r\f\r\n\r\n\r\n\r\n\t\t    bull_copyright_notice.txt       08/30/05  1008.4r   08/30/05  1007.3    00020025\r\n\r\n                                          -----------------------------------------------------------"
-#define TEST5 "\n\r\f\r\n\r\n\r\n\r\n\t\t    bull_copyright_notice.txt"
+#define LEN5 2321
+#define TEST5 "\r\f\r\n\r\n\r\n\r\n\t\t    bull_copyright_notice.txt"
 
 // bcpl
 #define LEN6 2312
@@ -61,7 +61,8 @@
 
 // some .archive files
 #define LEN11 2320
-#define TEST11 "\f\r\n\r\n\r\n\r\n\t\t    bull_copyright_notice.txt       08/30/05  1008.4r   08/30/05  1007.3    00020025\r\n\r\n                                          -----------------------------------------------------------\r\n\r\n\r\nHistorical Background\r\n" 
+//#define TEST11 "\f\r\n\r\n\r\n\r\n\t\t    bull_copyright_notice.txt       08/30/05  1008.4r   08/30/05  1007.3    00020025\r\n\r\n                                          -----------------------------------------------------------\r\n\r\n\r\nHistorical Background\r\n" 
+#define TEST11 "\f\r\n\r\n\r\n\r\n\t\t    bull_copyright_notice.txt"
 
 // 355 .asm
 #define LEN12 2280
@@ -71,9 +72,11 @@
 #define LEN13 2237
 #define TEST13 "\r\n\r\n*/\r\n                                          -----------------------------------------------------------\r\n\r\n\r\nHistorical Background\r\n\r\n"
 
+static char * argv1;
+
 static off_t flen = 0;
 static int fd;
-static int test (size_t len, char * teststring)
+static int test (size_t len, char * teststring, bool extra)
   {
     // If file is too short, we're done
     if (flen < len)
@@ -97,6 +100,38 @@ static int test (size_t len, char * teststring)
 
     if (memcmp (buffer, teststring, strlen (teststring)) == 0)
       {
+        if (extra)
+          {
+// There may be 0, 1, or 2 extra newlines before test 11
+#define nls 3
+// Get the last 3 bytes before the notice; assume the file ends in a newline
+            off_t os2 = lseek (fd, flen - len - nls, SEEK_SET);
+            if (os2 == -1)
+              {
+                perror ("lseek 3");
+                exit (1);
+              }
+
+            uint8_t buffer [nls];
+            ssize_t sz = read (fd, buffer, nls);
+            if (sz != nls)
+              {
+                printf ("%ld %ld %ld\n", flen, sz, len);
+                perror ("read 2");
+                exit (1);
+              }
+            if (buffer[0] == '\n' && buffer[1] == '\n' && buffer[2] == '\n')
+              {
+                len += 2;
+                //printf ("+2 %s\n", argv1);
+               }
+            else if (buffer[1] == '\n' && buffer[2] == '\n')
+              {
+                len += 1;
+                //printf ("+1 %s\n", argv1);
+              }
+          }
+
         //printf ("match\n");
         int rc = ftruncate (fd, flen - len);
         if (rc < 0)
@@ -112,6 +147,7 @@ static int test (size_t len, char * teststring)
 
 int main (int argc, char * argv [])
   {
+    argv1 = argv[1];
     if (argc < 2)
       {
         printf ("purge filename\n");
@@ -130,86 +166,86 @@ int main (int argc, char * argv [])
         exit (1);
       }
 
-    if (test (LEN1, TEST1))
+    if (test (LEN1, TEST1, false))
       {
         //printf ("P1: %s\n", argv [1]);
         goto done;
       }
 
-    if (test (LEN2, TEST2))
+    if (test (LEN2, TEST2, false))
       {
         //printf ("P2: %s\n", argv [1]);
         goto done;
       }
 
-    if (test (LEN3, TEST3))
+    if (test (LEN3, TEST3, false))
       {
         //printf ("P3: %s\n", argv [1]);
         goto done;
       }
 
-    if (test (LEN4, TEST4))
+    if (test (LEN4, TEST4, false))
       {
         //printf ("P4: %s\n", argv [1]);
         goto done;
       }
 
-    if (test (LEN5, TEST5))
+    if (test (LEN5, TEST5, true))
       {
         //printf ("P5: %s\n", argv [1]);
         goto done;
       }
 
-    if (test (LEN6, TEST6))
+    if (test (LEN6, TEST6, false))
       {
         //printf ("P6: %s\n", argv [1]);
         goto done;
       }
 
-    if (test (LEN7, TEST7))
+    if (test (LEN7, TEST7, false))
       {
         //printf ("P7: %s\n", argv [1]);
         goto done;
       }
 
-    if (test (LEN8, TEST8))
+    if (test (LEN8, TEST8, false))
       {
         //printf ("P8: %s\n", argv [1]);
         goto done;
       }
 
-    if (test (LEN9, TEST9))
+    if (test (LEN9, TEST9, false))
       {
         //printf ("P9: %s\n", argv [1]);
         goto done;
       }
 
-    if (test (LEN10, TEST10))
+    if (test (LEN10, TEST10, false))
       {
         //printf ("P10: %s\n", argv [1]);
         goto done;
       }
 
-    if (test (LEN11, TEST11))
+    if (test (LEN11, TEST11, false))
       {
         //printf ("P11: %s\n", argv [1]);
         goto done;
       }
 
-    if (test (LEN12, TEST12))
+    if (test (LEN12, TEST12, false))
       {
         //printf ("P12: %s\n", argv [1]);
         goto done;
       }
 
-    if (test (LEN13, TEST13))
+    if (test (LEN13, TEST13, false))
       {
         //printf ("P13: %s\n", argv [1]);
         goto done;
       }
 
 
-
+#if 0
     lseek (fd, 0, SEEK_SET);
 
     while (1)
@@ -231,6 +267,7 @@ int main (int argc, char * argv [])
            break;
          }
      }
+#endif
     
 done:;
     close (fd);
